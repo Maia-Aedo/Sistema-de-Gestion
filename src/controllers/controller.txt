@@ -1,0 +1,2 @@
+Los controllers sirven para procesar info y manejar lógica
+de la app. Ayuda a identificar errores y problemas de código.

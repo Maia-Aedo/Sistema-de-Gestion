@@ -1,0 +1,5 @@
+Los middlewares son funciones intermedias que actuan como interceptores de las 
+requests. Se encargan de procesar, modificar o verificar la info de ellas
+antes de llegar a destino o enviar response.
+El archivo JWT actuará como middleware para comprobar si el token enviado en la 
+peticion tiene firma válida y si es auténtico
