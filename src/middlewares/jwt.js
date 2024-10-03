@@ -16,7 +16,7 @@ const authJWT = (req = request, res = response, next = next) =>{
         if(err) return res.sendStatus(403).json({ok:false, msg:"Token inválido"});
         // Si no hay err, next permite al usuario continuar la petición
         // De ser necesario, guardar usuario en el request para usar en rutas protegidas
-        req.user = user;
+        req.usuario = user;
         // Pasa al siguiente middleware-ruta
         next();
     })

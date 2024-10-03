@@ -64,7 +64,7 @@ const loginOptions = {
     hostname: 'localhost',
     port: 3000,
     path: '/users/login',
-    method: 'GET',
+    method: 'POST',
     headers: {
         'Content-Type': 'application/json',
         'Content-Length': Buffer.byteLength(loginData), // La longitud será tipo logindata(obj creado)
@@ -81,7 +81,7 @@ const loginReq = http.request(loginOptions, (res) => { // Realizamos petición c
 
     // Cuando no hay más datos para recibir se ejecuta
     res.on('end', () => {
-        const response = JSON.parse(responseBody);
+        const response = responseBody;
         console.log('El login ha sido exitoso:', response);
         // Extraemos el token para usarlo
         const token = response.token;
