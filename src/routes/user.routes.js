@@ -12,9 +12,10 @@ const { verifyRole } = require('../middlewares/userRoles.js');
 const router = Router();
 
 // Configuramos cada endpoint con su método;
-router.post('/users/register-admin', authJWT, verifyRole('superUser'), methods.registerAdmin);
-router.post('/users/register-user', authJWT, verifyRole('admin'), methods.register);
-router.post('/users/login', authJWT, verifyRole('superUser'), methods.login);
+router.post('/users/register-super', authJWT, verifyRole('super'), methods.registerSuper);
+router.post('/users/register-admin', authJWT, verifyRole('admin'), methods.registerAdmin);
+router.post('/users/register-usuario', authJWT, verifyRole('usuario'), methods.register);
+router.post('/users/login', methods.login);
 // :id es un path parameter, express lo divide y coloca en req.params
 /* Colocamos el middleware para evitar que cualquiera que consulte el endpoint vea el token
 que solo se puede conseguir mediante autenticación en login */

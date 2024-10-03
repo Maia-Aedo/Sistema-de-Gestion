@@ -10,6 +10,6 @@ module.exports = {
     port: process.env.db_port,
     database: process.env.db_database,
     user: process.env.db_user,
-    password: process.env.db_password,
+    password: process.env.db_contrasena,
     secretKey: process.env.secret_seed
 };

@@ -5,17 +5,17 @@ const http = require('http');
 
 // Creamos obj con datos del nuevo user y lo convertimos a formato json
 const data = JSON.stringify({
-    username: 'testuser',
-    password: 'testpassword',
-    email: 'testuser@example.com',
-    role_id: 2 // super user
+    nombre: 'testuser',
+    contrasena: 'testpassword',
+    email: 'test@user.com',
+    rol_nombre: 'super'
 });
 
 // Definimos obj con las configs para la solicitud
 const options = {
     hostname: 'localhost',
     port: 3000,
-    path: '/users/register',
+    path: '/users/register-super',
     method: 'POST',
     headers: {
         'Content-Type': 'application/json', // El cuerpo de la solicitud es json
@@ -38,7 +38,7 @@ const req = http.request(options, (res) => {
     // El evento se ejecuta cuando ya no hay más datos (porque se recibieron todos)
     res.on('end', () => {
         // Imprimimos la resp en formato json
-        console.log('El registro fue exitoso:', JSON.parse(responseBody));
+        console.log('El registro fue exitoso:', (responseBody));
     });
 });
 
@@ -55,8 +55,8 @@ req.end();
 
 // log in - probamos login con el user creado
 const loginData = JSON.stringify({ // Creamos obj json con datos para login
-    username: 'testuser',
-    password: 'testpassword'
+    nombre: 'testuser',
+    contrasena: 'testpassword'
 });
 
 // Definimos las configs para realizar la solicitud
@@ -64,7 +64,7 @@ const loginOptions = {
     hostname: 'localhost',
     port: 3000,
     path: '/users/login',
-    method: 'POST',
+    method: 'GET',
     headers: {
         'Content-Type': 'application/json',
         'Content-Length': Buffer.byteLength(loginData), // La longitud será tipo logindata(obj creado)

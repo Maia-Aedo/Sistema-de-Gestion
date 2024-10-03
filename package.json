@@ -4,7 +4,7 @@
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node src/uploads/main.js"
+    "start": "nodemon src/uploads/main.js"
   },
   "keywords": [],
   "author": "",
@@ -20,6 +20,9 @@
     "promise-mysql": "^5.2.0"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/morgan": "^1.9.9",
     "cors": "^2.8.5",
     "morgan": "^1.10.0",
     "nodemon": "^3.1.7"

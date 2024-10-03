@@ -5,25 +5,27 @@
 
 // Traemos getConnection para gestionar conexión a BD
 const { getConnection } = require('../database/database');
-// Para registrar, otorga fn para hashear password
+// Para registrar, otorga fn para hashear contrasena
 const bcrypt = require('bcrypt');
 const { generateJWT } = require('../middlewares/jwt')
 
+// Registro para user con rol admin
 const registerAdmin = async(req = request, res = response) => {
     // Obtenemos usuario aplicando desestructuración
-    const user = { ...req.body };
+    const usuario = { ...req.body };
     const salt = 12;// valor aleatorio para hasheo
-    // Si no existe user, err no autorizado
-    if(!user) res.status(401).json({ok: false, msg: "No autorizado"});
-    if(req.user.role !== 'superUser') return res.status(403).json({ok:false, msg:"Sin permisos necesarios"});
+    // Si el usuario es nulo, err no autorizado
+    if(!usuario) res.status(401).json({ok: false, msg: "No autorizado"});
 
     try{
-        // Cambiamos password por la nueva hasheada
-        user.password = await bcrypt.hash(user.password, salt);
-        user.role = 'admin'
+        // Cambiamos contrasena por la nueva hasheada
+        usuario.contrasena = await bcrypt.hash(usuario.contrasena, salt);
+        usuario.rol = 'admin'
         const connection = await getConnection();
-        // Pasamos la query
-        const result = await connection.query('INSERT INTO users SET ?', user);
+        // Pasamos la query donde insertamos el nuevo user en la tabla
+        // const result = await connection.query('INSERT INTO usuario SET ?', usuario);
+        const [result] = await connection.execute('INSERT * INTO usuario SET nombre = ?', [usuario.nombre]);
+        if (result.length === 0) return null;
         res.status(201).json({ok: true, result, msg: "Admin creado"});
     } catch(e){
         console.log(e);
@@ -31,20 +33,43 @@ const registerAdmin = async(req = request, res = response) => {
     }
 };
 
-const register= async(req = request, res = response) => {
-    const user = { ...req.body };
-    const salt = 12;
-    
-    if(!user) res.status(401).json({ok: false, msg: "No autorizado"});
-    if(req.user.role !== 'admin') return res.status(403).json({ok:false, msg:"Sin permisos necesarios"});
+// Registro user con rol super
+const registerSuper = async(req = request, res = response) => {
+    // Obtenemos usuario aplicando desestructuración
+    const usuario = { ...req.body };
+    const salt = 12;// valor aleatorio para hasheo
 
     try{
-        
-        user.password = await bcrypt.hash(user.password, salt);
-        user.role = 'user'
+        // Cambiamos contrasena por la nueva hasheada
+        usuario.contrasena = await bcrypt.hash(usuario.contrasena, salt);
+        usuario.rol = 'super'
+        const connection = await getConnection();
+        // const result = await connection.query('INSERT INTO usuario SET ?', usuario);
+        const [result] = await connection.execute('INSERT * INTO usuario SET nombre = ?', [usuario.nombre]);
+        // Si el resultado està vacìo, retorna nulo
+        if (result.length === 0) return null;
+        res.status(201).json({ok: true, result, msg: "Admin creado"});
+    } catch(e){
+        console.log(e);
+        res.status(500).json({ok: false, e, msg: "Error en servidor"});
+    }
+};
+
+// Registro user con rol común
+const register= async(req = request, res = response) => {
+    const usuario = { ...req.body };
+    const salt = 12;
+    
+    if(!usuario) res.status(401).json({ok: false, msg: "No autorizado"});
+
+    try{
+        usuario.contrasena = await bcrypt.hash(usuario.contrasena, salt);
+        usuario.rol = 'usuario'
         const connection = await getConnection();
 
-        const result = await connection.query('INSERT INTO users SET ?', user);
+        // const result = await connection.query('INSERT INTO usuario SET ?', usuario);
+        const [result] = await connection.execute('INSERT * INTO usuario SET nombre = ?', [usuario.nombre]);
+        if (result.length === 0) return null;
         res.status(201).json({ok: true, result, msg: "Usuario creado"});
     } catch(e){
         console.log(e);
@@ -53,24 +78,24 @@ const register= async(req = request, res = response) => {
 };
 
 const login = async(req = request, res = response) => {
-    const user = { ...req.body };// Obtenemos user
+    const usuario = { ...req.body };// Obtenemos usuario
     // Si no existe, muestra error
-    if(!user) res.status(401).json({ok: false, msg: "no autorizado"})
+    if(!usuario) res.status(401).json({ok: false, msg: "no autorizado"})
     
-    // Consultamos BD por Username
+    // Consultamos BD por nombre de usuario
     try{
         const connection = await getConnection();
         const [result] = await connection.query(
-            'SELECT * FROM users WHERE username = ?',
-            user.username
+            'SELECT * FROM usuario WHERE nombre = ?',
+            usuario.nombre
         );
         // Si la consult no devuelve nada, err -no encontrado
         if(!result[0]) res.status(404).json({ok: false, msg: "usuario no encontrado"});
         // compare retorna boolean dependiendo si la contraseña es correcta o no
-        const isPassword = await bcrypt.compare(user.password, result[0].password);
+        const iscontrasena = await bcrypt.compare(usuario.contrasena, result[0].contrasena);
 
-        if(isPassword){
-            // Si es correcta, genera el token, enviando obj user como argumento
+        if(iscontrasena){
+            // Si es correcta, genera el token, enviando obj usuario como argumento
             const token = await generateJWT(result[0]);
             res.status(200).json({ok: true, token, msg: "Login"});
         }else{
@@ -83,4 +108,4 @@ const login = async(req = request, res = response) => {
 };
 
 // Exportamos todas las funciones
-module.exports = { registerAdmin, register, login }
+module.exports = { registerAdmin, registerSuper, register, login }

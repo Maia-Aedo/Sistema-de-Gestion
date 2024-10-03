@@ -8,8 +8,8 @@ const { verifyRole } = require('../middlewares/userRoles');
 const router = Router();
 
 // Ruta para registrar pagos (solo admin)
-router.post('/payments/register', authJWT, verifyRole('admin'), methods.registerPayment);
+router.post('/pagos/registrar', authJWT, verifyRole('admin'), methods.registerPayment);
 // Ruta para ver pagos
-router.get('/payments/user', authJWT, verifyRole('user'), methods.getPayments);
+router.get('/pagos/usuario', authJWT, verifyRole('usuario'), methods.getPayments);
 
 module.exports = router;

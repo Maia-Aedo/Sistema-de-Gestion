@@ -11,30 +11,29 @@ const authJWT = (req = request, res = response, next = next) =>{
     // Token pasa a ser string, si es nulo devuelve error -no autorizado
     if(token == null) return res.sendStatus(401).json({ ok:false, msg:"Ningún token fue provisto"});
     // Verificamos que la firma sea correcta | verify obtiene como parámetros token y key
-    jwt.verify(token, config.secretKey, (err, user) =>{
+    jwt.verify(token, config.secretKey, (err, usuario) =>{
         // Si hay error en verificación devuelve error -prohibido
         if(err) return res.sendStatus(403).json({ok:false, msg:"Token inválido"});
-        // Si no hay err, next permite al user continuar la petición
-        // De ser necesario, guardar user en el request para usar en rutas protegidas
-        req.user = user
+        // Si no hay err, next permite al usuario continuar la petición
+        // De ser necesario, guardar usuario en el request para usar en rutas protegidas
+        req.user = user;
         // Pasa al siguiente middleware-ruta
         next();
     })
 }
 
 /* Fn NO MIDDLEWARE - gestiona creación del token
-Recibe user que pasa a ser parte del payload */
-const generateJWT = async(user) =>{
-    // Generamos payload con info del user
+Recibe usuario que pasa a ser parte del payload */
+const generateJWT = async(usuario) =>{
+    // Generamos payload con info del usuario
     const payload = {
-        sub: user.id,
-        username: user.username,
-        name: user.nombre
+        sub: usuario.id,
+        name: usuario.nombre
     };
 
     const options = {
         // Duración de 24h
-        expiresIn: '1h'
+        expiresIn: '3h'
     };
     // Retornamos token para que pueda ser usado en peticiones
     return jwt.sign(payload, config.secretKey, options);

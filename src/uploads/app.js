@@ -10,7 +10,7 @@ const users = require('../routes/user.routes')
 const app = express();
 app.use(cors());
 // Configuraciones de express
-app.set('port', 3000);
+app.set('port', 8000);
 app.use(express.urlencoded({ extended: false }));
 // Para tranformar peticiones a formato json
 app.use(express.json());
@@ -20,9 +20,13 @@ app.use(morgan('dev'));
 
 app.use(users)
 
-app.use((err, req, res, next) =>{
+app.use((err, req, res, next) => {
     console.error(err);
-    res.status(500).json({ ok:false, msg:"Error interno en servidor", err});
+    res.status(500).json({ ok: false, msg: "Error interno en servidor", err });
+})
+
+app.get("/", (req, res) => {
+    res.send("Ok")
 })
 
 // Exportamos app
